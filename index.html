@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VS Code + Git — Guia Rápido</title>
+
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --card-hover: #1c2430;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --blue: #58a6ff;
+      --green: #3fb950;
+      --purple: #bc8cff;
+      --orange: #f0883e;
+      --red: #f85149;
+      --code-bg: #0b0f14;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                   Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    header {
+      padding: 60px 20px;
+      text-align: center;
+      background:
+        radial-gradient(circle at top, #172554 0, transparent 45%),
+        var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      margin-bottom: 10px;
+    }
+
+    header h1 span {
+      color: var(--blue);
+    }
+
+    header p {
+      color: var(--muted);
+      max-width: 700px;
+      margin: auto;
+      font-size: 1.05rem;
+    }
+
+    .container {
+      width: min(1200px, 92%);
+      margin: 40px auto;
+    }
+
+    .search {
+      width: 100%;
+      padding: 15px 18px;
+      margin-bottom: 35px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      font-size: 1rem;
+      outline: none;
+    }
+
+    .search:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(88, 166, 255, .15);
+    }
+
+    section {
+      margin-bottom: 50px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+    }
+
+    .section-title .icon {
+      font-size: 1.7rem;
+    }
+
+    .section-title.vscode {
+      color: var(--blue);
+    }
+
+    .section-title.git {
+      color: var(--green);
+    }
+
+    .category {
+      margin-bottom: 30px;
+    }
+
+    .category h3 {
+      color: var(--muted);
+      margin-bottom: 12px;
+      font-size: 1.05rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 12px;
+    }
+
+    .item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      padding: 14px 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      transition: .2s;
+    }
+
+    .item:hover {
+      background: var(--card-hover);
+      transform: translateY(-1px);
+    }
+
+    .description {
+      color: var(--text);
+      font-size: .95rem;
+    }
+
+    kbd {
+      white-space: nowrap;
+      background: #21262d;
+      border: 1px solid #484f58;
+      border-bottom-width: 2px;
+      border-radius: 6px;
+      padding: 4px 8px;
+      color: #fff;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: .82rem;
+    }
+
+    .git-command {
+      display: grid;
+      grid-template-columns: minmax(190px, 1fr) 2fr;
+      gap: 15px;
+      align-items: center;
+    }
+
+    code {
+      display: inline-block;
+      padding: 7px 10px;
+      border-radius: 6px;
+      background: var(--code-bg);
+      color: #79c0ff;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: .86rem;
+      overflow-x: auto;
+    }
+
+    .git-command code {
+      width: 100%;
+    }
+
+    .tip {
+      padding: 18px;
+      border-left: 4px solid var(--orange);
+      background: rgba(240, 136, 62, .08);
+      border-radius: 0 8px 8px 0;
+      color: var(--muted);
+      margin-top: 25px;
+    }
+
+    .workflow {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 25px;
+    }
+
+    .workflow h3 {
+      margin-bottom: 15px;
+      color: var(--purple);
+    }
+
+    .workflow pre {
+      overflow-x: auto;
+      background: var(--code-bg);
+      padding: 20px;
+      border-radius: 8px;
+      color: #c9d1d9;
+      font-family: Consolas, "Courier New", monospace;
+      line-height: 1.8;
+    }
+
+    footer {
+      text-align: center;
+      padding: 35px 20px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 40px 15px;
+      }
+
+      .container {
+        width: 94%;
+      }
+
+      .item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .git-command {
+        grid-template-columns: 1fr;
+      }
+
+      kbd {
+        align-self: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>⚡ <span>VS Code</span> + Git</h1>
+    <p>
+      Guia rápido com os principais atalhos do Visual Studio Code
+      e comandos essenciais do Git para o dia a dia.
+    </p>
+  </header>
+
+  <main class="container">
+
+    <input
+      type="search"
+      id="search"
+      class="search"
+      placeholder="🔎 Pesquisar atalhos ou comandos..."
+      aria-label="Pesquisar"
+    >
+
+    <!-- VS CODE -->
+    <section id="vscode">
+      <h2 class="section-title vscode">
+        <span class="icon">💻</span>
+        Atalhos do Visual Studio Code
+      </h2>
+
+      <div class="category">
+        <h3>Edição</h3>
+
+        <div class="grid">
+
+          <div class="item">
+            <span class="description">Copiar linha</span>
+            <kbd>Shift + Alt + ↑/↓</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Mover linha para cima/baixo</span>
+            <kbd>Alt + ↑/↓</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Duplicar seleção/linha</span>
+            <kbd>Shift + Alt + ↑/↓</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Excluir linha</span>
+            <kbd>Ctrl + Shift + K</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Comentar/descomentar linha</span>
+            <kbd>Ctrl + /</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Comentar bloco</span>
+            <kbd>Shift + Alt + A</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Formatar documento</span>
+            <kbd>Shift + Alt + F</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Formatar seleção</span>
+            <kbd>Ctrl + K → Ctrl + F</kbd>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="category">
+        <h3>Navegação</h3>
+
+        <div class="grid">
+
+          <div class="item">
+            <span class="description">Paleta de comandos</span>
+            <kbd>Ctrl + Shift + P</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Abrir arquivo</span>
+            <kbd>Ctrl + P</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Pesquisar no arquivo</span>
+            <kbd>Ctrl + F</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Substituir</span>
+            <kbd>Ctrl + H</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Pesquisar no projeto</span>
+            <kbd>Ctrl + Shift + F</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Ir para linha</span>
+            <kbd>Ctrl + G</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Ir para símbolo</span>
+            <kbd>Ctrl + Shift + O</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Voltar</span>
+            <kbd>Alt + ←</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Avançar</span>
+            <kbd>Alt + →</kbd>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="category">
+        <h3>Terminal e arquivos</h3>
+
+        <div class="grid">
+
+          <div class="item">
+            <span class="description">Novo terminal</span>
+            <kbd>Ctrl + Shift + `</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Mostrar/ocultar terminal</span>
+            <kbd>Ctrl + `</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Novo arquivo</span>
+            <kbd>Ctrl + N</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Abrir arquivo</span>
+            <kbd>Ctrl + O</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Salvar</span>
+            <kbd>Ctrl + S</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Salvar tudo</span>
+            <kbd>Ctrl + K → S</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Fechar editor</span>
+            <kbd>Ctrl + W</kbd>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="category">
+        <h3>Multi-cursor e seleção</h3>
+
+        <div class="grid">
+
+          <div class="item">
+            <span class="description">Adicionar cursor acima/abaixo</span>
+            <kbd>Ctrl + Alt + ↑/↓</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Selecionar próxima ocorrência</span>
+            <kbd>Ctrl + D</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Selecionar todas as ocorrências</span>
+            <kbd>Ctrl + Shift + L</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Desfazer seleção</span>
+            <kbd>Ctrl + U</kbd>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="category">
+        <h3>Depuração</h3>
+
+        <div class="grid">
+
+          <div class="item">
+            <span class="description">Iniciar / continuar debug</span>
+            <kbd>F5</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Executar sem debug</span>
+            <kbd>Ctrl + F5</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Breakpoint</span>
+            <kbd>F9</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Step Over</span>
+            <kbd>F10</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Step Into</span>
+            <kbd>F11</kbd>
+          </div>
+
+          <div class="item">
+            <span class="description">Step Out</span>
+            <kbd>Shift + F11</kbd>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="tip">
+        💡 <strong>Dica:</strong> pressione
+        <kbd>Ctrl + Shift + P</kbd>
+        para abrir a Paleta de Comandos e descobrir praticamente
+        qualquer função disponível no VS Code.
+      </div>
+    </section>
+
+
+    <!-- GIT -->
+    <section id="git">
+      <h2 class="section-title git">
+        <span class="icon">🌿</span>
+        Principais comandos do Git
+      </h2>
+
+      <div class="category">
+        <h3>Configuração</h3>
+
+        <div class="grid">
+
+          <div class="item git-command">
+            <code>git config --global user.name "Nome"</code>
+            <span class="description">Define seu nome</span>
+          </div>
+
+          <div class="item git-command">
+            <code>git config --global user.email "email"</code>
+            <span class="description">Define seu e-mail</span>
+          </div>
+
+          <div class="item git-command">
+            <code>git config --list</code>
+            <span class="description">Lista configurações</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="category">
+        <h3>Repositório</h3>
+
+        <div class="grid">
+
+          <div class="item git-command">
+            <code>git init</code>
+            <span class="description">Cria um novo repositório Git</span>
+          </div>
+
+          <div class="item git-command">
+            <code>git clone URL</code>
+            <span class="description">Clona um repositório remoto</span>
+          </div>
+
+          <div class="item git-command">
+            <code>git status</code>
+            <span class="description">Mostra o estado atual</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="category">
+        <h3>Alterações</h3>
+
+        <div class="grid">
+
+          <div class="item git-command">
+            <code>git add arquivo</code>
+            <span class="description">Adiciona um arquivo ao stage</span>
+          </div>
+
+          <div class="item git-command">
+            <code>git add .</code>
+            <span class="description">Adiciona todas as alterações</span>
+          </div>
+
+          <div class="item git-command">
+            <code>git commit -m "mensagem"</code>
+            <span class="description">Cria um commit</span>
+          </div>
+
+          <div class="item git-command">
+            <code>git diff</code>
+            <span class="description">Mostra alterações não adicionadas</span>
+          </div>
+
+          <div class="item git-command">
+            <code>git diff --staged</code>
+            <span class="description">Mostra alterações no stage</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="category">
+        <h3>Branches</h3>
+
+        <div class="grid">
+
+          <div class="item git-command">
+            <code>git branch</code>
+            <span class="description">Lista branches</span>
+          </div>
+
+          <div class="item git-command">
+            <code>git branch nome</code>
+            <span class="description">Cria uma branch</span>
+          </div>
+
+          <div class="item git-command">
+            <code>git switch nome</code>
+            <span class="description">Troca de branch</span>
+          </div>
+
+          <div class="item git-command">
+            <code>git switch -c nome</code>
+            <span class="description">Cria e troca para uma branch</span>
+          </div>
+
+          <div class="item git-command">
+            <code>git merge nome</code>
+            <span class="description">Mescla uma branch</span>
+          </div>
+
+          <div class="item git-command">
+            <code>git branch -d nome</code>
+            <span class="description">Exclui uma branch local</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="category">
+        <h3>Repositório remoto</h3>
+
+        <div class="grid">
+
+          <div class="item git-command">
+            <code>git remote -v</code>
+            <span class="description">Lista repositórios remotos</span>
+          </div>
+
+          <div class="item git-command">
+            <code>git remote add origin URL</code>
+            <span class="description">Adiciona um remoto</span>
+          </div>
+
+          <div class="item git-command">
+            <code>git push</code>
+            <span class="description">Envia commits para o remoto</span>
+          </div>
+
+          <div class="item git-command">
+            <code>git push -u origin main</code>
+            <span class="description">Publica a branch pela primeira vez</span>
+          </div>
+
+          <div class="item git-command">
+            <code>git pull</code>
+            <span class="description">Baixa e integra alterações</span>
+          </div>
+
+          <div class="item git-command">
+            <code>git fetch</code>
+            <span class="description">Baixa alterações sem fazer merge</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="category">
+        <h3>Histórico</h3>
+
+        <div class="grid">
+
+          <div class="item git-command">
+            <code>git log</code>
+            <span class="description">Exibe o histórico</span>
+          </div>
+
+          <div class="item git-command">
+            <code>git log --oneline</code>
+            <span class="description">Histórico resumido</span>
+          </div>
+
+          <div class="item git-command">
+            <code>git show</code>
+            <span class="description">Mostra detalhes de um commit</span>
+          </div>
+
+          <div class="item git-command">
+            <code>git blame arquivo</code>
+            <span class="description">Mostra autoria por linha</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="category">
+        <h3>Desfazer alterações</h3>
+
+        <div class="grid">
+
+          <div class="item git-command">
+            <code>git restore arquivo</code>
+            <span class="description">Descarta alterações locais</span>
+          </div>
+
+          <div class="item git-command">
+            <code>git restore --staged arquivo</code>
+            <span class="description">Remove arquivo do stage</span>
+          </div>
+
+          <div class="item git-command">
+            <code>git revert HASH</code>
+            <span class="description">Cria um commit que desfaz outro</span>
+          </div>
+
+          <div class="item git-command">
+            <code>git reset --soft HEAD~1</code>
+            <span class="description">Desfaz o último commit mantendo alterações</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="workflow">
+        <h3>🚀 Fluxo de trabalho mais comum</h3>
+
+        <pre>
+# 1. Verificar alterações
+git status
+
+# 2. Adicionar arquivos
+git add .
+
+# 3. Criar commit
+git commit -m "Descrição da alteração"
+
+# 4. Atualizar branch local
+git pull
+
+# 5. Enviar para o GitHub/GitLab/etc.
+git push
+        </pre>
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer>
+    Guia rápido — VS Code + Git
+  </footer>
+
+  <script>
+    const search = document.getElementById("search");
+    const items = document.querySelectorAll(".item");
+    const categories = document.querySelectorAll(".category");
+
+    search.addEventListener("input", () => {
+      const term = search.value.toLowerCase().trim();
+
+      items.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(term) ? "" : "none";
+      });
+
+      categories.forEach(category => {
+        const visibleItems = category.querySelectorAll(
+          ".item:not([style*='display: none'])"
+        );
+
+        category.style.display =
+          visibleItems.length > 0 ? "" : "none";
+      });
+    });
+  </script>
+
+</body>
+</html>
